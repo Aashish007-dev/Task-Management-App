@@ -3,12 +3,14 @@ import cors from 'cors';
 import 'dotenv/config'
 import connectDB from './config/db.js';
 import authRoute from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 const app = express()
 
 await connectDB();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],

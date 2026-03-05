@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
 
     profileImageUrl: {
         type: String,
-        default: ""
+        default: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_rp_progressive&w=740&q=80"
     },
 
     role: {
