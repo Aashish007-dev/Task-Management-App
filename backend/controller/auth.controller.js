@@ -71,3 +71,44 @@ export const loginController = async (req, res, next) => {
         next(error.message)
     }
 }
+
+
+export const userProfileController = async (req, res, next) => {
+    try {
+        const user = await UserModel.findById(req.user.id);
+        if(!user){
+            return next(errorHandler(404, "User not found"))
+        }
+
+        const {password: pass, ...rest} = user._doc;
+        res.status(200).json(rest);
+
+    } catch (error) {
+        next(error.message)
+    }
+
+}
+
+
+export const updateProfileController = async (req, res, next) => {
+    try {
+        const user = await UserModel.findById(req.user.id);
+        if(!user){
+            return next(errorHandler(404, "User not found"))
+        }
+
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        if(req.body.password){
+            user.password = bcrypt.hashSync(req.body.password, 10);
+        }
+
+        const updatedUser = await user.save();
+        const {password: pass, ...rest} = updatedUser._doc;
+        res.status(200).json(rest);
+        
+    } catch (error) {
+        next(error.message)
+    }
+}
