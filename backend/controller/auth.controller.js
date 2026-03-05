@@ -112,3 +112,19 @@ export const updateProfileController = async (req, res, next) => {
         next(error.message)
     }
 }
+
+
+export const uploadImageController = async (req, res , next) => {
+    try {
+
+        if(!req.file){
+            return next(errorHandler(400, "No file uploaded"))
+        }
+
+        const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        res.status(200).json({imageUrl});
+        
+    } catch (error) {
+        next(error.message)
+    }
+}
