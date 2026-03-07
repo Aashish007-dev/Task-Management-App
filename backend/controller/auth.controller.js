@@ -36,7 +36,7 @@ export const signupController = async (req, res, next) => {
         await user.save();
         res.status(201).json({success: true, message: "Signup successfully"});
     } catch (error) {
-        return next(error.message)
+        return next(error)
     }
 }
 
@@ -60,7 +60,7 @@ export const loginController = async (req, res, next) => {
         return next(errorHandler(401, "Invalid credentials!"));
     }
 
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1d'})
+    const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
 
     const {password: pass, ...rest} = user._doc;
 
@@ -68,7 +68,7 @@ export const loginController = async (req, res, next) => {
         httpOnly: true,
     }).json(rest)
     } catch (error) {
-        next(error.message)
+        next(error)
     }
 }
 
@@ -84,7 +84,7 @@ export const userProfileController = async (req, res, next) => {
         res.status(200).json(rest);
 
     } catch (error) {
-        next(error.message)
+        next(error)
     }
 
 }
@@ -109,7 +109,7 @@ export const updateProfileController = async (req, res, next) => {
         res.status(200).json(rest);
         
     } catch (error) {
-        next(error.message)
+        next(error)
     }
 }
 
@@ -125,6 +125,6 @@ export const uploadImageController = async (req, res , next) => {
         res.status(200).json({imageUrl});
         
     } catch (error) {
-        next(error.message)
+        next(error)
     }
 }

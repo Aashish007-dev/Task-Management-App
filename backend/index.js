@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'
 import connectDB from './config/db.js';
-import authRoute from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
+import authRoute from './routes/auth.route.js';
+import userRoute from './routes/user.route.js'; 
+
 
 const app = express()
 
@@ -19,6 +21,7 @@ app.use(cors({
 }));
 
 app.use('/api/auth', authRoute);
+app.use('/api/users', userRoute);
 
 
 app.use((err, req, res, next) => {
