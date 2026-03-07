@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
 import authRoute from './routes/auth.route.js';
 import userRoute from './routes/user.route.js'; 
+import taskRoute from './routes/task.route.js';
 
 
 const app = express()
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
+app.use('/api/tasks', taskRoute);
 
 
 app.use((err, req, res, next) => {
