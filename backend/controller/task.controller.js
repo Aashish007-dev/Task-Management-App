@@ -156,3 +156,23 @@ export const updateTaskController = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const deleteTaskController = async (req, res, next) => {
+    try {
+        const task = await TaskModel.findById(req.params.id)
+
+        if(!task){
+            return next(errorHandler(404, "Task not found!"))
+        }
+
+        await task.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Task deleted successfully"
+        })
+    } catch (error) {
+        next(error);
+    }
+}
