@@ -98,3 +98,61 @@ export const getTasksController = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const getTaskByIdController = async (req, res, next) => {
+    try {
+        const task = await TaskModel.findById(req.params.id).populate("assignedTo", "name email profileImageUrl");
+
+        if(!task){
+            return next(errorHandler("Task not found!", 404))
+
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: "Task fetched successfully",
+            task
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+export const updateTaskController = async (req, res, next) => {
+    try {
+
+        const task = await TaskModel.findById(req.params.id);
+
+        if(!task){
+            return next(errorHandler("Task not found!", 404))
+        }
+
+        task.title = req.body.title || task.title;
+        task.description = req.body.description || task.description;
+        task.priority = req.body.priority || task.priority;
+        task.dueDate = req.body.dueDate || task.dueDate;
+        task.attachments = req.body.attachments || task.attachments;
+        task.todoCheckList = req.body.todoCheckList || task.todoCheckList;
+
+        if(req.body.assignedTo){
+           if(!Array.isArray(req.body.assignedTo)){
+            return next(errorHandler("Assigned to must be an array of user ids", 400))
+           }
+           task.assignedTo = req.body.assignedTo;
+        }
+
+        const updatedTask = await task.save();
+        
+        res.status(200).json({
+            success: true,
+            message: "Task updated successfully",
+            updatedTask
+        })
+        
+    } catch (error) {
+        next(error)
+    }
+}
