@@ -176,3 +176,38 @@ export const deleteTaskController = async (req, res, next) => {
         next(error);
     }
 }
+
+
+export const updateTaskStatusController = async (req, res, next) => {
+    try {
+        const task = await TaskModel.findById(req.params.id);
+        if(!task){
+            return next(errorHandler("Task not found!", 404))
+        }
+
+        const isAssigned = task.assignedTo.some((userId) => userId.toString() === req.user.id.toString());
+
+        if(!isAssigned && req.user.role !== "admin"){
+            return next(errorHandler("You are not assigned to this task!", 403))
+        }
+
+        task.status = req.body.status || task.status;
+
+        if(task.status === "Completed"){
+            task.todoCheckList.forEach((item) => item.completed = true);
+        }
+
+        await task.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Task status updated successfully",
+            task
+        })
+
+        
+    } catch (error) {
+        next(error);
+    }
+
+}
