@@ -211,3 +211,47 @@ export const updateTaskStatusController = async (req, res, next) => {
     }
 
 }
+
+export const updateTaskTodoController = async (req, res, next) => {
+    try {
+        const {todoCheckList} = req.body;
+
+        const task = await TaskModel.findById(req.params.id);
+        if(!task){
+            return next(errorHandler("Task not found!", 404))
+        }
+
+        if(!task.assignedTo.includes(req.user.id) && req.user.role !== "admin"){
+            return next(errorHandler("You are not assigned to this task!", 403))
+        }
+
+        task.todoCheckList = todoCheckList || task.todoCheckList;
+
+        const completedCount = task.todoCheckList.filter((item) => item.completed).length;
+
+        const totalItems = task.todoCheckList.length;
+
+        task.progress = totalItems > 0 ? Math.round((completedCount/totalItems) * 100) : 0;
+
+        if(task.progress === 100){
+            task.status = "Completed";
+        }else if(task.progress > 0){
+            task.status = "In Progress";
+        }else{
+            task.status = "Pending";
+        }
+
+        await task.save();
+
+        const updatedTask = await TaskModel.findById(req.params.id).populate("assignedTo", "name email profileImageUrl");
+
+        res.status(200).json({
+            success: true,
+            message: "Task todoCheckList updated successfully",
+            task: updatedTask
+        })
+        
+    } catch (error) {
+        next(error)
+    }
+}
