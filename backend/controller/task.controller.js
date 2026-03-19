@@ -255,3 +255,73 @@ export const updateTaskTodoController = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const getDashboardDataController = async (req, res, next) => {
+    try {
+        const totalTasks = await TaskModel.countDocuments();
+        const pendingTasks = await TaskModel.countDocuments({status: "Pending"});
+        const completedTasks = await TaskModel.countDocuments({status: "Completed"});
+        const overdueTasks = await TaskModel.countDocuments({dueDate: {$lt: new Date()}, status: {$ne: "Completed"}});
+
+        const taskStatus = ["Pending", "In Progress", "Completed"];
+
+        const taskDistributionRaw = await TaskModel.aggregate([
+            {
+                $group: {
+                    _id: "$status",
+                    count: {$sum: 1}
+                }
+            }
+        ])
+
+        const taskDistribution = taskStatus.reduce((acc, status) => {
+            const formatedKey = status.replace(/\s+/g, "")
+
+            acc[formatedKey] = taskDistributionRaw.find((item) => item._id === status)?.count || 0;
+            return acc;
+        }, {})
+
+        taskDistribution["All"] = totalTasks;
+
+        const taskPriorities  = ["Low", "Medium", "High"];
+
+        const taskPriorityLevelRaw = await TaskModel.aggregate([
+            {
+                $group: {
+                    _id: "$priority",
+                    count: {$sum: 1}
+                }
+            }
+        ])
+
+        const taskPriorityLevel = taskPriorities.reduce((acc, priority) => {
+            acc[priority] = taskPriorityLevelRaw.find((item) => item._id === priority)?.count || 0;
+
+            return acc;
+        }, {})
+
+        const recentTasks = await TaskModel.find().sort({createdAt: -1}).limit(10).select("title status priority dueDate createdAt")
+
+
+        res.status(200).json({
+            success: true,
+            message: "Dashboard data fetched successfully",
+            statistics:{
+                totalTasks,
+                pendingTasks,
+                completedTasks,
+                overdueTasks,   
+            },
+
+            charts:{
+                taskDistribution,
+                taskPriorityLevel,
+                
+            },
+            recentTasks
+        })
+    } catch (error) {
+        next(error)
+    }
+}
