@@ -1,6 +1,6 @@
 import express from "express";
 import { adminOnly, verifyToken } from "../utils/verifyUser.js";
-import { createTaskController, deleteTaskController, getDashboardDataController, getTaskByIdController, getTasksController, updateTaskController, updateTaskStatusController, updateTaskTodoController } from "../controller/task.controller.js";
+import { createTaskController, deleteTaskController, getDashboardDataController, getTaskByIdController, getTasksController, getUserDashboardDataController, updateTaskController, updateTaskStatusController, updateTaskTodoController } from "../controller/task.controller.js";
 
 const router = express.Router();
 
@@ -10,6 +10,8 @@ router.post('/create', verifyToken, adminOnly, createTaskController)
 router.get('/', verifyToken, getTasksController)
 
 router.get('/dashboard-data', verifyToken, adminOnly, getDashboardDataController)
+
+router.get('/user-dashboard-data', verifyToken, getUserDashboardDataController)
 
 router.get('/:id', verifyToken, getTaskByIdController)
 

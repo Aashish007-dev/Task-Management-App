@@ -1,5 +1,6 @@
 import { errorHandler } from "../utils/error.js";
 import TaskModel from "../models/task.model.js";
+import mongoose from "mongoose";
 
 
 export const createTaskController = async (req, res, next) => {
@@ -321,6 +322,87 @@ export const getDashboardDataController = async (req, res, next) => {
             },
             recentTasks
         })
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+export const getUserDashboardDataController = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+    
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+
+        const totalTasks = await TaskModel.countDocuments({assignedTo: userObjectId});
+        const pendingTasks = await TaskModel.countDocuments({assignedTo: userObjectId, status: "Pending"});
+        const completedTasks = await TaskModel.countDocuments({assignedTo: userObjectId, status: "Completed"});
+        const overdueTasks = await TaskModel.countDocuments({assignedTo: userObjectId, dueDate: {$lt: new Date()}, status: {$ne: "Completed"}});
+
+        const taskStatus = ["Pending", "In Progress", "Completed"];
+
+        const taskDistributionRaw = await TaskModel.aggregate([
+            {
+                $match: {assignedTo: userObjectId}
+            },
+            {
+                $group: {
+                    _id: "$status",
+                    count: {$sum: 1}
+                }
+            }
+        ])
+
+        const taskDistribution = taskStatus.reduce((acc, status) => {
+            const formatedKey = status.replace(/\s+/g, "")
+
+            acc[formatedKey] = taskDistributionRaw.find((item) => item._id === status)?.count || 0;
+            return acc;
+        }, {})
+
+        taskDistribution["All"] = totalTasks;
+
+        const taskPriorities  = ["Low", "Medium", "High"];
+
+        const taskPriorityLevelRaw = await TaskModel.aggregate([
+            {
+                $match: {assignedTo: userObjectId}
+            },
+            {
+                $group: {
+                    _id: "$priority",
+                    count: {$sum: 1}
+                }
+            }
+        ])
+
+        const taskPriorityLevel = taskPriorities.reduce((acc, priority) => {
+            acc[priority] = taskPriorityLevelRaw.find((item) => item._id === priority)?.count || 0;
+
+            return acc;
+        }, {})
+
+        const recentTasks = await TaskModel.find({assignedTo: userObjectId}).sort({createdAt: -1}).limit(10).select("title status priority dueDate createdAt")
+
+
+        res.status(200).json({
+            success: true,
+            message: "Dashboard data fetched successfully",
+            statistics:{
+                totalTasks,
+                pendingTasks,
+                completedTasks,
+                overdueTasks,   
+            },
+
+            charts:{
+                taskDistribution,
+                taskPriorityLevel,
+                
+            },
+            recentTasks
+        })
+        
     } catch (error) {
         next(error)
     }
