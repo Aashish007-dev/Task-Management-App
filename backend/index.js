@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import authRoute from './routes/auth.route.js';
 import userRoute from './routes/user.route.js'; 
 import taskRoute from './routes/task.route.js';
-
+import reportRoute from './routes/report.route.js';
 
 const app = express()
 
@@ -24,6 +24,8 @@ app.use(cors({
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
 app.use('/api/tasks', taskRoute);
+app.use('/api/reports', reportRoute);
+
 
 
 app.use((err, req, res, next) => {
