@@ -5,18 +5,22 @@ import { FaEye } from "react-icons/fa"
 import { Link, useNavigate } from "react-router-dom"
 import { validateEmail } from "../../utils/helper"
 import axiosInstance from "../../utils/axiosInstance"
+import {useDispatch, useSelector} from 'react-redux'
+import { signInStart, signInSuccess } from "../../redux/slice/userSlice"
 
 
 
 const Login = () => {
   
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
 
+  const {loading} = useSelector((state) => state.user);
   
 
   const handleSubmit = async (e) => {
@@ -37,6 +41,8 @@ const Login = () => {
     // login API call
 
     try {
+      dispatch(signInStart())
+
       const response = await axiosInstance.post('/auth/login', {
         email, password
       })
@@ -44,8 +50,10 @@ const Login = () => {
       // console.log(response.data)
 
       if(response.data.role === 'admin'){
+        dispatch(signInSuccess(response.data))
         navigate('/admin/dashboard');
       }else{
+        dispatch(signInSuccess(response.data))
         navigate('/user/dashboard');
       }
     } catch (error) {
@@ -116,9 +124,13 @@ const Login = () => {
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              <div>
+              {loading ? (
+                <span className="animate-pulse">Loading...</span>
+              ): (
+                <div>
                 <button type="submit" className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-0 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer">Login</button>
               </div>
+              )}
             </form>
 
             <div className="mt-6 text-center text-sm ">
