@@ -4,6 +4,7 @@ import DashboardLayout from '../../components/DashboardLayout'
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import RecentTasks from '../../components/RecentTasks';
 
 const Dashboard = () => {
 
@@ -45,7 +46,7 @@ const Dashboard = () => {
                 <p className="text-blue-100 mt-1">{moment().format('dddd Do MMMM YYYY')}</p>
               </div>
               <div className='mt-4 md:mt-0'>
-                <button onClick={() => navigate('/admin/create-task')} className='bg-white text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md'>Create Task</button>
+                <button onClick={() => navigate('/admin/create-task')} className='bg-white text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md cursor-pointer'>Create Task</button>
               </div>
             </div>
           </div>
@@ -76,7 +77,9 @@ const Dashboard = () => {
 
           {/* Charts section */}
 
-          
+          {/* Recent Tasks Section */}
+          <RecentTasks tasks={dashboardData?.recentTasks || []} />
+
         </div>
     </DashboardLayout>
   )
