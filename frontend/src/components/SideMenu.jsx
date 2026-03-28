@@ -25,7 +25,9 @@ const SideMenu = ({activeMenu}) => {
   }
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post('/auth/logout');
+      const response = await axiosInstance.post('/auth/logout', {}, {
+        withCredentials: true,
+      });
       if(response.data){
         dispatch(logoutSuccess());
         navigate('/login');
