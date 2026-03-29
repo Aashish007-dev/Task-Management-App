@@ -10,7 +10,7 @@ const RecentTasks = ({tasks}) => {
     <div className='bg-white rounded-xl shadow-md overflow-hidden '>
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
             <h3 className='text-lg font-semobold text-gray-800 '>Recent Tasks</h3>
-            <button className='text-blue-600 hover:text-blue-800 text-sm cursor-pointer font-medium transition-colors p-2 bg-blue-50 hover:bg-blue-100 rounded-lg' onClick={() => navigate('/tasks')}>See more →</button>
+            <button className='text-blue-600 hover:text-blue-800 text-sm cursor-pointer font-medium transition-colors p-2 bg-blue-50 hover:bg-blue-100 rounded-lg' onClick={() => navigate('/admin/tasks')}>See more →</button>
         </div>
         <div className="p-6">
           {tasks?.length > 0 ? (
