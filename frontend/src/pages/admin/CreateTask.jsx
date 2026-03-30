@@ -79,6 +79,43 @@ const CreateTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if(!taskData.title.trim()){
+      setError("Title is required!");
+      return
+      
+    }
+
+    if(!taskData.description.trim()){
+      setError("Description is required!");
+      return
+      
+    }
+
+    if(!taskData.dueDate){
+      setError("Due Date is required!");
+      return
+      
+    }
+
+    if(taskData.assignedTo?.length === 0){
+      setError("Task is not assign to anyone");
+      return
+      
+    }
+
+    if(taskData.todoCheckList?.length === 0){
+      setError("add at least one task!");
+      return
+      
+    }
+
+    if(taskId){
+      updateTask();
+      return;
+    }
+
+    createTask();
     
   }
   return (
@@ -170,12 +207,11 @@ const CreateTask = () => {
                 <AddAttachmentsInput attachments = {taskData?.attachments} setAttachments = {(value) => handleValueChange("attachments", value)} />
 
               </div>
-              {error && (
-                <p className='text-red-500 text-sm mt-2 font-medium'>{error}</p>
-              )}
+              
               <div className="flex justify-end mt-7 ">
                 <button 
                 onClick={handleSubmit}
+                type='button'
                 className='px-2 py-2 bg-green-500 border border-green-300 rounded-md text-white hover:bg-green-800 cursor-pointer w-full'>
                   {taskId ? "Update Task" : "Create Task"}
                 </button>
