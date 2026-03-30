@@ -6,6 +6,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import RecentTasks from '../../components/RecentTasks';
 import CustomPieChart from '../../components/CustomPieChart';
+import CustomBarChart from '../../components/CustomBarChart';
 
 const COLORS = [ "#00C49F", "#FFBB28", "#8884d8"];
 
@@ -13,14 +14,14 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
   const {currentUser} = useSelector((state) => state.user);;
-  const [dashboardData, setDashboardData] = useState(null);
-  const [pieChartData, setPieChartData] = useState(null);
-  const [barChartData, setBarChartData] = useState(null);
+  const [dashboardData, setDashboardData] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
 
   // prepare data for pie chart
   const prepareChartData = (data) => {
-    const taskDistribution = data?.taskDistribution || null;
-    const taskPriorityLevels = data?.taskPriorityLevel || null;
+    const taskDistribution = data?.taskDistribution || {};
+    const taskPriorityLevels = data?.taskPriorityLevel || {};
 
     const taskDistributionData = [
       {
@@ -38,7 +39,6 @@ const Dashboard = () => {
   ]
 
     setPieChartData(taskDistributionData);
-
 
     const priorityLevelData = [
       {
@@ -58,9 +58,6 @@ const Dashboard = () => {
       setBarChartData(priorityLevelData);
 
   }
-
-  
-
 
   const getDashboardData = async () => {
     try {
@@ -130,6 +127,14 @@ const Dashboard = () => {
               <h3 className='text-lg font-semibold text-gray-800 mb-4'>Task Distribution</h3>
               <div className="h-64">
                 <CustomPieChart data={pieChartData} label = "Total Tasks" colors = {COLORS} />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl ">
+              <h3 className='text-lg font-semibold text-gray-800 mb-4'>Task Priority Levels</h3>
+
+              <div className="h-64">
+                <CustomBarChart data={barChartData}  />
               </div>
             </div>
           </div>
