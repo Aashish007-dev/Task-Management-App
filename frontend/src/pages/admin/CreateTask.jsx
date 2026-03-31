@@ -8,6 +8,7 @@ import SelectedUsers from '../../components/SelectedUsers';
 import TodoListInput from '../../components/TodoListInput';
 import AddAttechmentsInput from '../../components/AddAttachmentsInput';
 import AddAttachmentsInput from '../../components/AddAttachmentsInput';
+import axiosInstance from '../../utils/axiosInstance';
 
 const CreateTask = () => {
   const location = useLocation();
@@ -46,9 +47,22 @@ const CreateTask = () => {
 
   const createTask = async () => {
     try {
-      
+      const todolist = taskData.todoCheckList?.map((item) => ({
+        text: item,
+        completed: false
+      }))
+
+      const response = await axiosInstance.post("/tasks/create", {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate).toISOString(),
+        todoCheckList: todolist,
+        
+      })
+      clearData()
+
+      console.log(response.data)
     } catch (error) {
-      
+      console.log("Error creating task!", error)
     }
   }
 
