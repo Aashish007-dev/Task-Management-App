@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../../components/DashboardLayout'
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
+import TaskStatusTabs from '../../components/TaskStatusTabs';
+import {FaFileLines} from 'react-icons/fa6'
 
 const ManageTasks = () => {
 
@@ -59,7 +61,31 @@ const ManageTasks = () => {
 
   return (
     <DashboardLayout activeMenu={"Manage Task"}>
-        <div className='my-5'></div>
+        <div className='my-5 px-4 sm:px-6 lg:px-8'>
+          <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+            <div className="flex items-center justify-between w-full gap-4 md:w-auto">
+              <h2 className='text-2xl md:text-3xl font-bold text-gray-800'>My Tasks</h2>
+
+              <button 
+              onClick={handleDownloadReport}
+              type='button'
+              className='md:hidden px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-color duration-200 font-medium shadow-sm hover:shadow-md'>Download</button>
+            </div>
+            {allTasks?.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+                <TaskStatusTabs tabs={tabs} activeTab={filterStatus} setActiveTab={setFilterStatus}/>
+
+                <button 
+                onClick={handleDownloadReport}
+                type='button'
+                className='hidden md:flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-2xl transition-all duration-200 font-medium shadow-sm hover:shadow-md  active:scale-95'>
+                  <FaFileLines  className='text-lg'/>
+                  <span>Download Report</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
     </DashboardLayout>
   )
 }
