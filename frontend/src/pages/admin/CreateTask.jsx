@@ -10,6 +10,7 @@ import AddAttechmentsInput from '../../components/AddAttachmentsInput';
 import AddAttachmentsInput from '../../components/AddAttachmentsInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
+import { toast } from 'react-hot-toast';
 
 const CreateTask = () => {
   const location = useLocation();
@@ -59,19 +60,39 @@ const CreateTask = () => {
         todoCheckList: todolist,
         
       })
+
+      toast.success("Task created successfully!");
       clearData()
 
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.log("Error creating task!", error)
+      toast.error("Failed to create task!")
     }
   }
 
   const updateTask = async () => {
     try {
-      
+      const todoList = taskData.todoCheckList?.map((item) =>{
+        const prevTodoChecklist = currentTask?.todoCheckList || []
+        const matchedTask = prevTodoChecklist.find((task) => task.text === item)
+        return {
+          text: item,
+          completed: matchedTask ? matchedTask.completed : false
+        }
+      })
+
+      const response = await axiosInstance.put(`/tasks/${taskId}`, {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate).toISOString(),
+        todoCheckList: todoList,
+      })
+
+      toast.success("Task updated successfully!");
+      // console.log(response.data)
     } catch (error) {
-      
+      console.log("Error updating task!", error)
+      toast.error("Failed to update task!")
     }
   }
 
