@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TaskStatusTabs from '../../components/TaskStatusTabs';
 import {FaFileLines} from 'react-icons/fa6'
+import TaskCard from '../../components/TaskCard';
 
 const ManageTasks = () => {
 
@@ -84,6 +85,24 @@ const ManageTasks = () => {
                 </button>
               </div>
             )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4  mt-4">
+            {allTasks?.map((item, index) => (
+              <TaskCard
+              key={item._id} 
+              title={item.title} 
+              description={item.description} 
+              status={item.status} 
+              dueDate={item.dueDate} 
+              priority={item.priority}
+              createdAt={item.createdAt}
+              progress={item.progress}
+              assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)} 
+              attachmentCount = {item.attachments?.length || 0}
+              completedTodoCount = {item.completedTodoCount || 0}
+              todoCheckList = {item.todoCheckList || []}
+              onClick={() => handleClick(item)} />
+            ))}
           </div>
         </div>
     </DashboardLayout>
