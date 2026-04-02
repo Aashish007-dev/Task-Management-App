@@ -32,7 +32,7 @@ const SelectedUsers = ({selectedUser, setSelectedUser}) => {
         setIsModelOpen(false);
     }
 
-    const selectedUserAvatars = allUsers.filter((user) => selectedUser.includes(user._id)).map((user) => user.profileImageUrl)
+    const selectedUserAvatars = allUsers.filter((user) => selectedUser?.includes(user._id)).map((user) => user.profileImageUrl)
 
     useEffect(() => {
         getAllUsers();
@@ -41,7 +41,7 @@ const SelectedUsers = ({selectedUser, setSelectedUser}) => {
     }, []);
 
     useEffect(() => {
-        if(selectedUser.length === 0){
+        if(selectedUser?.length === 0){
             setTempSelectedUser([]);
         }
         return () => {}
