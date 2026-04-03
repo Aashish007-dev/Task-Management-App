@@ -11,6 +11,8 @@ import AddAttachmentsInput from '../../components/AddAttachmentsInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
+import Modal from '../../components/Modal';
+import DeleteAlert from '../../components/DeleteAlert';
 
 const CreateTask = () => {
   const location = useLocation();
@@ -122,9 +124,15 @@ const CreateTask = () => {
 
   const deleteTask = async () => {
     try {
-      
+      await axiosInstance.delete(`/tasks/${taskId}`)
+
+      setOpenDeleteAlert(false);
+
+      toast.success("Task deleted successfully!");
+      navigate("/admin/tasks");
     } catch (error) {
-      
+      console.log("Error deleting task!", error);
+      toast.error("Failed to delete task!");
     }
   }
 
@@ -187,7 +195,7 @@ const CreateTask = () => {
               {taskId ? "Update Task" : "Create New Task"}
             </h2>
             {taskId && (
-              <button onClick={() => setOpenDeleteAlert(true)} className='flex items-center gap-2 text-red-600 hover:text-red-800'>
+              <button onClick={() => setOpenDeleteAlert(true)} className='flex items-center gap-2 text-red-600 hover:text-red-800 cursor-pointer'>
                 <MdDelete className='text-lg cursor-pointer' /> Delete Task
               </button>
             )}
@@ -280,6 +288,10 @@ const CreateTask = () => {
           </form>
         </div>
       </div>
+
+      <Modal isOpen={openDeleteAlert} onClose={() => setOpenDeleteAlert(false)} title={"Delete Task"}> 
+        <DeleteAlert content="Are you sure you want to delete this task?" onDelete={() => deleteTask()} />
+      </Modal>
     </DashboardLayout>
   )
 }
