@@ -5,6 +5,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import TaskStatusTabs from '../../components/TaskStatusTabs';
 import {FaFileLines} from 'react-icons/fa6'
 import TaskCard from '../../components/TaskCard';
+import { toast } from 'react-hot-toast';
 
 const ManageTasks = () => {
 
@@ -47,8 +48,26 @@ const ManageTasks = () => {
     navigate(`/admin/create-task`, {state: {taskId: taskData._id}});
   }
 
-  const handleDownloadReport = () => {
+  const handleDownloadReport = async () => {
+    try {
+      const response = await axiosInstance.get('/reports/export/tasks', {
+        responseType: 'blob',
+      });
 
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'tasks_details.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Task details downloaded successfully!");
+    } catch (error) {
+      console.log("Error Downloading task details!", error);
+      toast.error("Failed to download task details. Please try again")
+    }
   }
 
   useEffect(() => {
