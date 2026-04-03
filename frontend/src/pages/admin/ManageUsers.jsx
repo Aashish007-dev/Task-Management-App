@@ -3,6 +3,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import DashboardLayout from '../../components/DashboardLayout';
 import { FaFileAlt } from 'react-icons/fa';
 import UserCard from '../../components/UserCard';
+import { toast } from 'react-hot-toast';
 
 const ManageUsers = () => {
 
@@ -21,9 +22,24 @@ const ManageUsers = () => {
 
   const handleDownloadReport = async () => {
     try {
+      const response = await axiosInstance.get('/reports/export/users',{
+        responseType: 'blob',
+      });
+
+      // Create a url for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'users_details.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
       
+      toast.success("User details downloaded successfully!");
     } catch (error) {
-      
+      console.log("Error Downloading user details!", error);
+      toast.error("Failed to download user details. Please try again")
     }
   }
 

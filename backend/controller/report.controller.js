@@ -59,9 +59,9 @@ export const exportUsersReportController = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 taskCount: 0,
-                completedTasks: 0,
+                completedTask: 0,
                 pendingTasks: 0,
-                inProgressTasks: 0
+                inProgressTask: 0
             }
         })
 
@@ -74,9 +74,9 @@ export const exportUsersReportController = async (req, res, next) => {
                         if(task.status === "Pending"){
                             userTaskMap[assignedUser._id].pendingTasks += 1;
                         }else if(task.status === "Completed"){
-                            userTaskMap[assignedUser._id].completedTasks += 1;
+                            userTaskMap[assignedUser._id].completedTask += 1;
                         }else if(task.status === "In Progress"){
-                            userTaskMap[assignedUser._id].inProgressTasks += 1;
+                            userTaskMap[assignedUser._id].inProgressTask += 1;
                         }
                     }
                 })
